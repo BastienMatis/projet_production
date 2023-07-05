@@ -17,6 +17,8 @@ CREATE TABLE student (
   userId INT NOT NULL,
   studentIp VARCHAR(255),
   studentUsername VARCHAR(255),
+  studentGivenName VARCHAR(255),
+  studentFamilyName VARCHAR(255),
   FOREIGN KEY (userId) REFERENCES user(id)
 );
 
