@@ -3,10 +3,13 @@
 ### Installation et lancement :
 
 ```bash
-npm i```
+npm i
+```
 
 ```bash
-npm run build```
+npm run build
+```
 
 ```bash
-npm run start```
+npm run start
+```
