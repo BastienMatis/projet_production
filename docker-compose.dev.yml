@@ -7,8 +7,8 @@ services:
       dockerfile: ./docker/Dockerfile.dev
     command: /bin/bash -c "while sleep 1000; do :; done"
     working_dir: /home/dev
-    # networks:
-    #   - api-network
+    networks:
+      - api-network
     volumes:
       - ./:/home/dev:cached
     
@@ -27,10 +27,10 @@ services:
     volumes:
       - ./dbms/dbms-data:/var/lib/mysql
       - ./dbms/mariadb.cnf:/etc/mysql/mariadb.cnf
-    # networks:
-    #   - api-network
+    networks:
+      - api-network
 
-# networks:
-#   api-network:
-#     driver: bridge
-#     name: api-network
+networks:
+  api-network:
+    driver: bridge
+    name: api-network
