@@ -3,3 +3,15 @@ node_modules
 dist
 
 .env
+
+/.cache/
+/.dotnet/
+/.gnupg/
+/.npm/
+/.ssh/
+/.vscode-server/
+/build/
+/.gitconfig
+/.mycli-history
+/.mycli.log
+/.myclirc
