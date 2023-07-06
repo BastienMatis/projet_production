@@ -10,7 +10,7 @@ RUN apt-get update \
     && apt-get install -y mycli \
     && apt-get install -y tzdata \    
     && npm install -g typescript \
-    && npm install -g ts-node \
+    && npm install -g ts-node
 
 # Fixer le fuseau horaire
 ENV TZ Europe/Paris
