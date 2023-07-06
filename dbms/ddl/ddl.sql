@@ -53,7 +53,7 @@ CREATE TABLE score (
   id INT NOT NULL,
   studentId INT NOT NULL,
   challengeId INT NOT NULL,
-)
+);
 
 CREATE TABLE classChallenge (
   classId INT NOT NULL,
