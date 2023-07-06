@@ -1,28 +1,36 @@
-import mysql, { Pool } from 'mysql2/promise';
+import mysql, { Pool, RowDataPacket, FieldPacket } from 'mysql2/promise';
+import dotenv from 'dotenv';
 
-/** Wrapper de la connexion à la SGBDR.
- * On stock une seule référence à la connexion-pool, et on va systématiquement
- * récupérer cette référence pour nos requêtes.
- */
+dotenv.config();
+
 export class DB {
-
-  // Variable "static": une seule instance pour toutes les instances de la classe DB
   private static POOL: Pool;
 
-  /**
-   * Récupérer ou créer la connexion-pool.
-   */
-  static get Connection(): Pool {
+  static async initialize(): Promise<void> {
     if (!this.POOL) {
       this.POOL = mysql.createPool({
-        host: process.env.DB_HOST || 'dbms',
-        user: process.env.DB_USER || 'api-dev',
-        database: process.env.DB_DATABASE || 'projet-production',
-        password: process.env.DB_PASSWORD || 'api-dev-password',  
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        database: process.env.DB_DATABASE,
+        password: process.env.DB_PASSWORD,
       });
     }
 
-    return this.POOL;
+    try {
+      const connection = await this.POOL.getConnection();
+      await connection.ping();
+      connection.release();
+      console.log('Database connection established.');
+    } catch (error) {
+      console.error('Error connecting to the database:', error);
+      process.exit(1);
+    }
   }
 
+  static get Connection(): Promise<Pool> {
+    if (!this.POOL) {
+      console.error('Database connection not established.');
+    }
+    return Promise.resolve(this.POOL);
+  }
 }
