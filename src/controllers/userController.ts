@@ -30,14 +30,15 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
   };
 
   export const createUser = async (req: Request, res: Response): Promise<void> => {
-    const { firstName, lastName, email } = req.body;
+    const { username, email } = req.body;
+    console.log(req.body);
     try {
       const connection = await DB.Connection;
       const [result] = await connection.query<ResultSetHeader>(
-        'INSERT INTO users (firstName, lastName, email) VALUES (?, ?, ?)',
-        [firstName, lastName, email]
+        'INSERT INTO users (username, email) VALUES (?, ?)',
+        [username, email]
       );
-      res.json({ id: result.insertId, firstName, lastName, email });
+      res.json({ id: result.insertId, username, email });
     } catch (error) {
       console.error('Error creating user:', error);
       res.status(500).json({ message: 'Error creating user.' });
@@ -46,17 +47,17 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
   
   export const updateUser = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    const { firstName, lastName, email } = req.body;
+    const { username, email } = req.body;
     try {
       const connection = await DB.Connection;
       const [result] = await connection.query<ResultSetHeader>(
-        'UPDATE users SET firstName = ?, lastName = ?, email = ? WHERE id = ?',
-        [firstName, lastName, email, id]
+        'UPDATE users SET username = ?, email = ? WHERE id = ?',
+        [username, email, id]
       );
       if (result.affectedRows === 0) {
         res.status(404).json({ message: 'User not found.' });
       } else {
-        res.json({ id: Number(id), firstName, lastName, email });
+        res.json({ id: Number(id), username, email });
       }
     } catch (error) {
       console.error('Error updating user:', error);
@@ -68,7 +69,7 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     const { id } = req.params;
     try {
       const connection = await DB.Connection;
-      const [result] = await connection.query<ResultSetHeader>('DELETE FROM users WHEREid = ?', [id]);
+      const [result] = await connection.query<ResultSetHeader>('DELETE FROM users WHERE id = ?', [id]);
       if (result.affectedRows === 0) {
         res.status(404).json({ message: 'User not found.' });
       } else {
