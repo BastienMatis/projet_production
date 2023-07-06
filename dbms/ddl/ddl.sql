@@ -31,7 +31,7 @@ CREATE TABLE studentClass (
   userId INT NOT NULL,
   classId INT NOT NULL,
   FOREIGN KEY (userId) REFERENCES user(id),
-  FOREIGN KEY (classId) REFERENCES classes(id)
+  FOREIGN KEY (classId) REFERENCES class(id)
 );
 
 CREATE TABLE challenge (
@@ -53,11 +53,11 @@ CREATE TABLE score (
   id INT NOT NULL,
   studentId INT NOT NULL,
   challengeId INT NOT NULL,
-)
+);
 
 CREATE TABLE classChallenge (
   classId INT NOT NULL,
   challengeId INT NOT NULL,
-  FOREIGN KEY (classId) REFERENCES Class(id),
+  FOREIGN KEY (classId) REFERENCES class(id),
   FOREIGN KEY (challengeId) REFERENCES challenge(id)
 );
