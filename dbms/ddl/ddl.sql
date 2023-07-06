@@ -48,6 +48,7 @@ CREATE TABLE challenge_questions (
   challengeId INT NOT NULL,
   FOREIGN KEY (challengeId) REFERENCES challenges(id)
 );
+
 CREATE TABLE student_connections (
   connectionIp VARCHAR(255),
   connectionPort INT,
@@ -58,13 +59,13 @@ CREATE TABLE student_connections (
   challengeId INT NOT NULL,
   FOREIGN KEY (userId) REFERENCES users(id),
   FOREIGN KEY (challengeId) REFERENCES challenges(id)
-)
+);
 
 CREATE TABLE scores (
   id INT AUTO_INCREMENT PRIMARY KEY,
   studentId INT NOT NULL,
   challengeId INT NOT NULL,
-  FOREIGN KEY (studentId) REFERENCES students(id),
+  FOREIGN KEY (studentId) REFERENCES students(userId),
   FOREIGN KEY (challengeId) REFERENCES challenges(id)
 );
 
@@ -74,7 +75,7 @@ CREATE TABLE admin_inputs (
   input TEXT,
   challenge_questionId INT NOT NULL,
   FOREIGN KEY (challenge_questionId) REFERENCES challenge_questions(id)
-)
+);
 
 CREATE TABLE solutions (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -82,7 +83,7 @@ CREATE TABLE solutions (
   expectedError TEXT,
   challenge_questionId INT NOT NULL,
   FOREIGN KEY (challenge_questionId) REFERENCES challenge_questions(id)
-)
+);
 
 CREATE TABLE class_challenges (
   classId INT NOT NULL,
@@ -98,4 +99,4 @@ CREATE TABLE user_questions (
   score INT,
   FOREIGN KEY (userId) REFERENCES users(id),
   FOREIGN KEY (challenge_questionId) REFERENCES challenge_questions(id)
-)  
+);
