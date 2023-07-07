@@ -41,8 +41,6 @@ CREATE TABLE challenge_questions (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   description TEXT,
-  command VARCHAR(255),
-  mistakeMsg TEXT,
   questionNumber INT NOT NULL,
   questionValue INT NOT NULL,
   challengeId INT NOT NULL,
@@ -69,16 +67,9 @@ CREATE TABLE scores (
   FOREIGN KEY (challengeId) REFERENCES challenges(id)
 );
 
--- Script que l'admin lance à chaque fois que l'élève valide sa réponse
-CREATE TABLE admin_inputs (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  input TEXT,
-  challenge_questionId INT NOT NULL,
-  FOREIGN KEY (challenge_questionId) REFERENCES challenge_questions(id)
-);
-
 CREATE TABLE solutions (
   id INT AUTO_INCREMENT PRIMARY KEY,
+  command TEXT,
   expectedResponse TEXT,
   expectedError TEXT,
   challenge_questionId INT NOT NULL,
@@ -92,11 +83,11 @@ CREATE TABLE class_challenges (
   FOREIGN KEY (challengeId) REFERENCES challenges(id)
 );
 
-CREATE TABLE user_questions (
+CREATE TABLE student_answers (
   userId INT NOT NULL,
   challenge_questionId INT NOT NULL,
   response TEXT,
-  score INT,
+  is_correct BOOLEAN,
   FOREIGN KEY (userId) REFERENCES users(id),
   FOREIGN KEY (challenge_questionId) REFERENCES challenge_questions(id)
 );
