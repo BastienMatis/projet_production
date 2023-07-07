@@ -1,18 +1,25 @@
 import express from 'express';
-   import {
-     getAllUsers,
-     getUserById,
-     createUser,
-     updateUser,
-     deleteUser,
-   } from '../controllers/userController';
+import {
+  getAllUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
+} from '../controllers/userController';
 
-   const router = express.Router();
+import { loginAsAdmin } from '../controllers/authController';
 
-   router.get('/', getAllUsers);
-   router.get('/:id', getUserById);
-   router.post('/', createUser);
-   router.put('/:id', updateUser);
-   router.delete('/:id', deleteUser);
+const router = express.Router();
 
-   export default router;
+router.get('/', getAllUsers);
+router.get('/:id', getUserById);
+router.post('/', createUser);
+router.put('/:id', updateUser);
+router.delete('/:id', deleteUser);
+
+// Auth routes
+router.post('/loginAsAdmin', (req, res) => {
+  loginAsAdmin(req, res);
+});
+
+export default router;
