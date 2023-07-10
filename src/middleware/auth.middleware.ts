@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { ACCESS_AUD, ISSUER } from "../routes/Auth";
+import { ACCESS_AUD, ISSUER } from "../controllers/authController";
 import { IAccessToken } from "../types/auth/IAccessToken";
-// import { ApiError } from "../utility/Error/ApiError";
-// import { ErrorCode } from "../utility/Error/ErrorCode";
+import { ApiError } from "../utility/Error/ApiError";
+import { ErrorCode } from "../utility/Error/ErrorCode";
 import { JWT } from "../utility/JWT";
 
 export const JWTAuthHandler = async (request: Request, response: Response, next: NextFunction) => {
@@ -37,12 +37,12 @@ export const JWTAuthHandler = async (request: Request, response: Response, next:
       throw new ApiError(ErrorCode.Unauthorized, 'auth/invalid-access-token', "Access token could not be decoded");
     }
 
-    if (!decoded.userId) {
+    if (!decoded.id) {
       throw new ApiError(ErrorCode.Unauthorized, 'auth/invalid-access-token', "userId was not found in the payload");
     }
 
     // Validé, stocker le userId sur la réponse pour utilisation plus tard
-    response.locals.userId = decoded.userId;
+    response.locals.id = decoded.id;
 
     next();
 
