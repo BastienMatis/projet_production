@@ -4,6 +4,7 @@ import {
   getStudentConnections,
   deleteStudentConnection,
 } from '../controllers/studentConnectionController';
+import { SSHClient } from '../controllers/sshController';
 
 const router = express.Router();
 
