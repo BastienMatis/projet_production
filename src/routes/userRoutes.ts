@@ -8,7 +8,7 @@ import {
 } from '../controllers/userController';
 
 import { loginAsAdmin } from '../controllers/authController';
-import { connectToStudent } from '../controllers/sshController';
+import { SSHClient } from '../controllers/sshController';
 
 const router = express.Router();
 
@@ -25,8 +25,9 @@ router.post('/loginAsAdmin', (req, res) => {
 
 // Student connection
 router.post('/connectToStudent', async (req, res) => {
-  console.log("lskdjflk");
-  await connectToStudent(req, res);
+  const { host, username } = req.body;
+  const sshCli = new SSHClient();
+  sshCli.connect({ host: host, port: 22, username: username, privateKeyPath : '../secrets/signing'}, res);
 });
 
 export default router;
