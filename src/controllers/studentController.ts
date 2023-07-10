@@ -75,10 +75,11 @@ export const updateStudent = async (req: Request, res: Response): Promise<void> 
 };
 
 export const deleteStudent = async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params;
+  const { userId } = req.params;
+  console.log(req.params)
   try {
     const connection = await DB.Connection;
-    const [result] = await connection.query<ResultSetHeader>('DELETE FROM students WHERE id = ?', [id]);
+    const [result] = await connection.query<ResultSetHeader>('DELETE FROM students WHERE userId = ?', [userId]);
     if (result.affectedRows === 0) {
       res.status(404).json({ message: 'Student not found.' });
     } else {

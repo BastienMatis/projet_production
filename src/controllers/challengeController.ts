@@ -67,6 +67,7 @@ export const updateChallenge = async (req: Request, res: Response): Promise<void
 };
 
 export const deleteChallenge = async (req: Request, res: Response): Promise<void> => {
+  // TODO : Error deleting challenge from database. Error: Cannot delete or update a parent row: a foreign key constraint fails (`projet_production`.`scores`, CONSTRAINT `scores_ibfk_2` FOREIGN KEY (`challengeId`) REFERENCES `challenges` (`id`))
   const { id } = req.params;
   try {
     const connection = await DB.Connection;
