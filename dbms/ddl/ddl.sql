@@ -27,7 +27,8 @@ CREATE TABLE class (
 
 CREATE TABLE challenges (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL
+  name VARCHAR(255) NOT NULL,
+  closed BOOLEAN NOT NULL
 );
 
 CREATE TABLE student_class (
