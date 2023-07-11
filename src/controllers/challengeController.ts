@@ -82,3 +82,23 @@ export const deleteChallenge = async (req: Request, res: Response): Promise<void
     res.status(500).json({ message: 'Error deleting challenge.' });
   }
 };
+
+export const getChallengeById = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  try {
+    const connection = await DB.Connection;
+    const [rows] = await connection.query<RowDataPacket[]>('SELECT * FROM challenges WHERE id = ?', [id]);
+    if (rows.length === 0) {
+      res.status(404).json({ message: 'Challenge not found.' });
+    } else {
+      const challenge: Challenge = {
+        id: rows[0].id,
+        name: rows[0].name,
+      };
+      res.json(challenge);
+    }
+  } catch (error) {
+    console.error('Error retrieving challenge from database.', error);
+    res.status(500).json({ message: 'Error retrieving challenge.' });
+  }
+};

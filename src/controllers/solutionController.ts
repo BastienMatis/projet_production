@@ -106,3 +106,26 @@ export const deleteSolution = async (req: Request, res: Response): Promise<void>
     res.status(500).json({ message: 'Error deleting solution from database.' });
   }
 };
+
+export const getSolutionByQuestionIds = async (req: Request, res: Response): Promise<void> => {
+  const questionIds = req.params.questionIds.split(',');
+  try {
+    const connection = await DB.Connection;
+    const [rows] = await connection.query<RowDataPacket[]>(
+      'SELECT * FROM solutions WHERE challenge_questionId IN (?)',
+      [questionIds]
+    );
+    const solutions: Solution[] = rows.map((row: RowDataPacket) => ({
+      id: row.id,
+      command: row.command,
+      expectedResponse: row.expectedResponse,
+      expectedError: row.expectedError,
+      challengeQuestionId: row.challenge_questionId,
+    }));
+    res.json(solutions);
+  } catch (error) {
+    console.error('Error retrieving solutions from database.', error);
+    res.status(500).json({ message: 'Error retrieving solutions.' });
+  }
+};
+
