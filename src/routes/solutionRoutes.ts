@@ -13,5 +13,6 @@ router.post('/', createSolution);
 router.get('/:id', getSolutionById);
 router.put('/:id', updateSolution);
 router.delete('/:id', deleteSolution);
+router.get('/forQuestions/:questionIds', getSolutionByQuestionIds);
 
 export default router;
