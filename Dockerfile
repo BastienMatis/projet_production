@@ -30,6 +30,9 @@ COPY package*.json ./
 # Installez les dépendances de l'application
 RUN npm install --production
 
+# Variables d'enviro
+ENV $(cat .env | grep -v ^# | xargs -0)
+
 # Copiez tout le reste de l'application dans le conteneur
 COPY . .
 

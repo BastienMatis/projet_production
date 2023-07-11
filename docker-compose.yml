@@ -11,6 +11,11 @@ services:
       - api-network
     volumes:
       - ./:/home/prod:cached
+    environment:
+      - DB_HOST=dbms
+      - DB_USER=api-dev
+      - DB_DATABASE=projet_production
+      - DB_PASSWORD=api-dev-password
     
   dbms:
     image: mariadb
@@ -20,10 +25,6 @@ services:
     environment: 
       - MYSQL_ALLOW_EMPTY_PASSWORD=false
       - MYSQL_ROOT_PASSWORD=rootpassword
-      - DB_HOST=dbms
-      - DB_USER=api-dev
-      - DB_DATABASE=projet_production
-      - DB_PASSWORD=api-dev-password
     command: [
       "--character-set-server=utf8mb4",
       "--collation-server=utf8mb4_unicode_ci"

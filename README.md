@@ -19,10 +19,10 @@ npm run start
 Assurez-vous d'avoir un .env complet avec les bonnes données.
 
 - Build du container :
-docker build -t projet_production .
+docker-compose build
 
 - Run du container pour vérifier que l'image fonctionne :
-docker run -d -p 8000:8000 projet_production
+docker compose-up
 
 - Déploiement sur heroku
 heroku login
