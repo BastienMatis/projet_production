@@ -1,9 +1,6 @@
 # Utilisez l'image officielle Node.js en tant qu'image de base
 FROM node:18
 
-# Copiez le fichier .env dans le conteneur
-COPY .env .
-
 # Forcer l'utilisation des miroirs français
 COPY ./docker/sources.list /etc/apt/sources.list
 
@@ -38,19 +35,6 @@ COPY . .
 
 # Exposez le port sur lequel votre application écoute
 EXPOSE 8000
-
-
-# Chargez les variables d'environnement à partir du fichier .env pendant la construction de l'image
-ARG DB_HOST
-ARG DB_PORT
-ARG DB_USER
-ARG DB_PASSWORD
-
-ENV DB_HOST=$DB_HOST
-ENV DB_PORT=$DB_PORT
-ENV DB_USER=$DB_USER
-ENV DB_PASSWORD=$DB_PASSWORD
-
 
 # Démarrez l'application lorsque le conteneur démarre
 CMD [ "npm", "start" ]
