@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { DB } from '../utility/DB';
+import { promisify } from 'util';
+import { exec as execCallback } from 'child_process';
 
 export interface ChallengeQuestion {
   id: number;
@@ -80,5 +82,70 @@ export const deleteChallengeQuestion = async (req: Request, res: Response): Prom
   } catch (error) {
     console.error('Error deleting challenge question from database.', error);
     res.status(500).json({ message: 'Error deleting challenge question.' });
+  }
+};
+
+const exec = promisify(execCallback);
+
+export const runChallengeTest = async (req: Request, res: Response): Promise<void> => {
+  const { challengeId } = req.params;
+  const { solutionCommands } = req.body;
+
+  try {
+    const connection = await DB.Connection;
+    const [rows] = await connection.query<RowDataPacket[]>(
+      'SELECT * FROM challenge_questions WHERE challengeId = ? ORDER BY questionNumber ASC',
+      [challengeId]
+    );
+    const firstQuestionNumber = rows[0].questionNumber;
+
+    let lastQuestionId = null;
+    let status = "OK";
+    let message = '';
+    let allSolutionsCorrect = true;
+
+    const responses: any[] = [];
+
+    for (let i = 0; i < solutionCommands.length; i++) {
+      const questionNumber = firstQuestionNumber + i;
+      const { command, questionId, expectedResponse } = solutionCommands[i];
+
+      try {
+        const { stdout, stderr } = await exec(command);
+
+        if (stdout.trim() !== expectedResponse) {
+          lastQuestionId = questionId;
+          status = "Mauvaise réponse";
+          message = stdout;
+          allSolutionsCorrect = false;
+          responses.push({ lastQuestionId, status, message, error: true });
+        } else {
+          lastQuestionId = questionId;
+          status = "OK";
+          message = stdout;
+          responses.push({ lastQuestionId, status, message, error: false });
+        }
+
+        if (i < solutionCommands.length - 1) {
+          const nextQuestionId = solutionCommands[i + 1].questionId;
+          lastQuestionId = nextQuestionId;
+          status = "OK";
+          message = '';
+        }
+      } catch (error: any) {
+        console.error(`Erreur lors de l'exécution de la commande`);
+        lastQuestionId = questionId;
+        status = "Erreur commande";
+        message = error.message;
+        allSolutionsCorrect = false;
+        responses.push({ lastQuestionId, status, message, error: true });
+      }
+    }
+
+    const responsesObj = Object.assign({}, responses);
+    res.json(responsesObj);
+  } catch (error) {
+    console.error('Error running challenge test:', error);
+    res.status(500).json({ message: 'Error running challenge test.' });
   }
 };
