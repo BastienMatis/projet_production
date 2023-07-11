@@ -4,6 +4,7 @@ import {
   createChallengeQuestion,
   updateChallengeQuestion,
   deleteChallengeQuestion,
+  runChallengeTest
 } from '../controllers/challengeQuestionController';
 import { SSHClient } from '../controllers/sshController';
 
