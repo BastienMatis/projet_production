@@ -6,11 +6,11 @@ services:
       context: ./
       dockerfile: Dockerfile
     command: /bin/bash -c "while sleep 1000; do :; done"
-    working_dir: /home/dev
+    working_dir: /home/prod
     networks:
       - api-network
     volumes:
-      - ./:/home/dev:cached
+      - ./:/home/prod:cached
     
   dbms:
     image: mariadb
@@ -22,7 +22,7 @@ services:
       - MYSQL_ROOT_PASSWORD=rootpassword
     command: [
       "--character-set-server=utf8mb4",
-      "--collation-server=utf8mb4_unicode_ci",
+      "--collation-server=utf8mb4_unicode_ci"
     ]
     volumes:
       - ./dbms/dbms-data:/var/lib/mysql
