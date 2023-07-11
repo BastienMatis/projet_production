@@ -5,6 +5,7 @@ import {
   updateClass,
   deleteClass,
 } from '../controllers/classController';
+import { SSHClient } from '../controllers/sshController';
 
 const router = express.Router();
 

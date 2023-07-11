@@ -5,6 +5,7 @@ import {
   updateSolution,
   deleteSolution,
 } from '../controllers/solutionController';
+import { SSHClient } from '../controllers/sshController';
 
 const router = express.Router();
 

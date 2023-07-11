@@ -1,5 +1,6 @@
 import express from 'express';
 import { createScore, getScoresByStudent, deleteScore } from '../controllers/scoreController';
+import { SSHClient } from '../controllers/sshController';
 
 const router = express.Router();
 

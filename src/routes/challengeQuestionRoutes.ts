@@ -5,8 +5,11 @@ import {
   updateChallengeQuestion,
   deleteChallengeQuestion,
 } from '../controllers/challengeQuestionController';
+import { SSHClient } from '../controllers/sshController';
 
 const router = express.Router();
+
+
 
 router.get('/:challengeId', getAllChallengeQuestions);
 router.post('/', createChallengeQuestion);

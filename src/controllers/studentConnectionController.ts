@@ -1,31 +1,20 @@
 import { Request, Response } from 'express';
 import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { DB } from '../utility/DB';
+import { StudentDBConnection } from '../types/DBConnection';
 
-export interface StudentConnection {
-  connectionIp: string;
-  connectionPort: number;
-  connectionName: string;
-  password: string;
-  dbName: string;
-  userId: number;
-  challengeId: number;
-}
-
-export const connectToStudent = async (req: Request, res: Response): Promise<void> => {
-  const { connectionIp, connectionPort, connectionName, password, dbName, userId, challengeId } = req.body;
+export const connectToStudentDB = async (req: Request, res: Response): Promise<void> => {
+  const { dbUserName, password, dbName, userId, challengeId } = req.body;
   try {
     const connection = await DB.Connection;
     const [result] = await connection.query<ResultSetHeader>(
-      'INSERT INTO student_connections (connectionIp, connectionPort, connectionName, password, dbName, userId, challengeId) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [connectionIp, connectionPort, connectionName, password, dbName, userId, challengeId]
+      'UPDATE student_connections SET dbUserName ?, password ?, dbName ?, challengeId ? WHERE userId = ? AND challengeId = ?',
+      [dbUserName, password, dbName, challengeId]
     );
     const insertedId = result.insertId;
     res.json({
       id: insertedId,
-      connectionIp,
-      connectionPort,
-      connectionName,
+      dbUserName,
       password,
       dbName,
       userId,
@@ -42,10 +31,8 @@ export const getStudentConnections = async (req: Request, res: Response): Promis
   try {
     const connection = await DB.Connection;
     const [rows] = await connection.query<RowDataPacket[]>('SELECT * FROM student_connections WHERE userId = ?', [userId]);
-    const studentConnections: StudentConnection[] = rows.map((row: RowDataPacket) => ({
-      connectionIp: row.connectionIp,
-      connectionPort: row.connectionPort,
-      connectionName: row.connectionName,
+    const studentConnections: StudentDBConnection[] = rows.map((row: RowDataPacket) => ({
+      dbUserName: row.dbUserName,
       password: row.password,
       dbName: row.dbName,
       userId: row.userId,
