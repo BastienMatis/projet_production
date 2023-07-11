@@ -24,13 +24,9 @@ docker build -t projet_production .
 - Run du container pour vérifier que l'image fonctionne :
 docker run -d -p 8000:8000 projet_production
 
-- Initialiser un nouveau repo Git à la racine (lors du premier déploiement)
-[git init]
-
 - Déploiement sur heroku
 heroku login
 heroku container:login
-[heroku create projet_production]
 heroku stack:set container
 heroku container:push web --app projet-production-hollygirls
 heroku container:release web --app projet-production-hollygirls
