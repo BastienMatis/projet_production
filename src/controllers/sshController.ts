@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import { Response } from "express";
+import { ResultSetHeader } from "mysql2/promise";
 import { DB } from "../utility/DB";
 
 import { Client, ExecOptions, ShellOptions } from "ssh2";
