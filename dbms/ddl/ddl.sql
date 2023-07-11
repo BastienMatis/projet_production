@@ -52,6 +52,7 @@ CREATE TABLE student_connections (
   connectionIp VARCHAR(255),
   connectionPort INT,
   connectionName VARCHAR(255),
+  dbUserName VARCHAR(255),
   password VARCHAR(255),
   dbName VARCHAR(255),
   userId INT NOT NULL,
