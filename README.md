@@ -22,7 +22,7 @@ Assurez-vous d'avoir un .env complet avec les bonnes données.
 docker-compose build
 
 - Run du container pour vérifier que l'image fonctionne :
-docker compose-up
+docker-compose up
 
 - Déploiement sur heroku
 heroku login
