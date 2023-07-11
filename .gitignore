@@ -15,4 +15,4 @@ dist
 /.mycli-history
 /.mycli.log
 /.myclirc
-/.secrets/signing/
+/.secrets/

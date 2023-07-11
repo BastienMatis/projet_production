@@ -20,6 +20,6 @@
       ]
     },
     // Quelques extensions VSCode à inclure par défaut pour notre projet 
-    "forwardPorts": [ 5050 ]
+    "forwardPorts": [ 5050, 8000 ]
   }
   
