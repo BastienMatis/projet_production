@@ -2,6 +2,10 @@ node_modules
 
 dist
 
+secrets/
+
+build
+
 .env
 
 /.cache/
@@ -15,3 +19,4 @@ dist
 /.mycli-history
 /.mycli.log
 /.myclirc
+

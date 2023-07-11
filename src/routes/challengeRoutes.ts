@@ -4,8 +4,9 @@ import {
   createChallenge,
   updateChallenge,
   deleteChallenge,
-  getChallengeById,
+  getChallengeById
 } from '../controllers/challengeController';
+import { SSHClient } from '../controllers/sshController';
 
 const router = express.Router();
 

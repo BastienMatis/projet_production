@@ -1,50 +1,61 @@
-import { Request, Response } from 'express';
-import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
-import { DB } from '../utility/DB';
+import { Request, Response } from "express";
+import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import { DB } from "../utility/DB";
 
-const { Client } = require('ssh2');
-const path = require('path');
+import { Client, ExecOptions, ShellOptions } from "ssh2";
+import * as fs from "fs";
+import * as path from "path";
+import { ConnectionInfo, SSHConnection } from "../types/ssh/connection";
 
-export const connectToStudent = async (req: Request, res: Response): Promise<void> => {
-    console.log("Connecting...");
-    const conn = new Client();
+export class SSHClient implements SSHConnection {
+  private conn: Client;
 
-    const { host, username } = req.body;
+  constructor() {
+    this.conn = new Client();
+  }
 
-    conn.on('ready', () => {
-        console.log('Connexion SSH établie avec succès');
+  public async connect(
+    { host, port, username, privateKeyPath }: ConnectionInfo,
+    res: Response
+  ): Promise<void> {
+    this.conn.on("ready", () => {
+      console.log("Connexion SSH établie avec succès");
+      const absolutePath = path.resolve(__dirname, privateKeyPath);
 
-        // conn.exec('votre_commande_ssh', (err, stream) => {
-        //     if (err) {
-        //         console.error('Erreur lors de l\'exécution de la commande SSH:', err);
-        //         conn.end();
-        //         return;
-        //     }
-
-        //     stream.on('close', (code, signal) => {
-        //         console.log('Commande terminée avec le code', code);
-        //         conn.end();
-        //     }).on('data', (data) => {
-        //         console.log('Sortie de la commande SSH:', data.toString());
-        //     });
-        // });
-    });
-
-    conn.on('error', (err: any) => {
-        console.error('Erreur lors de la connexion SSH', err);
-    });
-
-    console.log({
+      this.conn.connect({
         host: host,
-        port: 22,
+        port: port,
         username: username,
-        privateKey: require('fs').readFileSync('/home/dev/secrets/signing/signing.key')
+        privateKey: fs.readFileSync(absolutePath),
+      });
     });
-    conn.connect({
-        host: host,
-        port: 22,
-        username: username,
-        privateKey: require('fs').readFileSync('/home/dev/secrets/signing/signing.key')
+    const connection = await DB.Connection;
+
+    const [result] = await connection.query<ResultSetHeader>(
+      "INSERT INTO student_connections (connectionIp, connectionport, connectionName) VALUES (?, ?, ?)",
+      [host, port, username]
+    );
+    res.status(200).json({ message: "Connected in SSH." });
+
+    this.conn.on("error", (err: any) => {
+      console.error("Erreur lors de la connexion SSH", err);
     });
-    res.status(200).json({ message: 'Connected in SSH.' });
+  }
+
+  public disconnect(): void {
+    this.conn.end();
+  }
 }
+
+// A répéter dans toutes les fonctions qui doivent lancer des commandes
+// const sshClient = new SSHClient();
+
+// sshClient.connect('unixshell.hetic.glassworks.tech', 22, 'identifiant', '../secrets/signing');
+
+// ...
+// Effectuez d'autres opérations, traitements ou commandes SSH ici
+// ...
+
+//sshClient.disconnect();
+
+export default SSHConnection;

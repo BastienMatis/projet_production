@@ -10,6 +10,7 @@ import solutionRoutes from './routes/solutionRoutes';
 import score from './routes/scoreRoutes';
 import classChallengeRoutes from './routes/classChallengeRoutes';
 import studentAnswerRoutes from './routes/studentAnswerRoutes';
+import  authRoutes from "./routes/authRoutes";  
 import { DB } from './utility/DB';
 import cors from 'cors';
 
@@ -33,6 +34,7 @@ app.use('/api/scores', score);
 app.use('/api/solutions', solutionRoutes);
 app.use('/api/classChallenges', classChallengeRoutes);
 app.use('/api/studentAnswers', studentAnswerRoutes);
+app.use('/auth', authRoutes);  
 
 
 // Déplacez cette ligne après l'initialisation des routes

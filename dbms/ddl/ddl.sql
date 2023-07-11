@@ -27,7 +27,8 @@ CREATE TABLE class (
 
 CREATE TABLE challenges (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL
+  name VARCHAR(255) NOT NULL,
+  closed BOOLEAN NOT NULL
 );
 
 CREATE TABLE student_class (
@@ -51,6 +52,7 @@ CREATE TABLE student_connections (
   connectionIp VARCHAR(255),
   connectionPort INT,
   connectionName VARCHAR(255),
+  dbUserName VARCHAR(255),
   password VARCHAR(255),
   dbName VARCHAR(255),
   userId INT NOT NULL,
