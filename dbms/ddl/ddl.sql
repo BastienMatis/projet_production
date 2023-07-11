@@ -49,11 +49,12 @@ CREATE TABLE challenge_questions (
 );
 
 CREATE TABLE student_connections (
-  connectionIp VARCHAR(255),
-  connectionPort INT,
-  connectionName VARCHAR(255),
+  sshHost VARCHAR(255),
+  sshName VARCHAR(255),
+  dbHost VARCHAR(255),
+  dbPort INT,
   dbUserName VARCHAR(255),
-  password VARCHAR(255),
+  dbPassword VARCHAR(255),
   dbName VARCHAR(255),
   userId INT NOT NULL,
   challengeId INT NOT NULL,

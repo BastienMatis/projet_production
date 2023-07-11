@@ -1,7 +1,16 @@
-export interface StudentDBConnection {
+export interface StudentConnection {
+    sshHost: string,
+    sshName: string,
+    dbHost: string;
+    dbPort: number;
     dbUserName: string;
-    password: string;
+    dbPassword: string;
     dbName: string;
-    userId: number;
-    challengeId: number;
+}
+export interface StudentDBConnection {
+  dbHost: string;
+  dbPort: number;
+  dbUserName: string;
+  dbPassword: string;
+  dbName: string;
   }
