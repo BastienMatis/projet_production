@@ -30,6 +30,17 @@ services:
     networks:
       - api-network
 
+  proxy:
+    image: nginx
+    ports:
+      - "8000:8000"
+      - "443:443"
+    restart: always
+    volumes:
+      - ./nginx/api-dev.nginx.conf:/etc/nginx/conf.d/api.nginx.conf
+    networks:
+      - api-network  
+
 networks:
   api-network:
     driver: bridge
