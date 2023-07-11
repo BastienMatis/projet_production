@@ -28,6 +28,7 @@ services:
     environment: 
       - MYSQL_ALLOW_EMPTY_PASSWORD=false
       - MYSQL_ROOT_PASSWORD=rootpassword
+      
     command: [
       "--character-set-server=utf8mb4",
       "--collation-server=utf8mb4_unicode_ci",
@@ -41,7 +42,7 @@ services:
   proxy:
     image: nginx
     ports:
-      - "8000:8000"
+      - "80:80"
       - "443:443"
     restart: always
     volumes:
