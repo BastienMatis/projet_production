@@ -2,7 +2,7 @@ node_modules
 
 dist
 
-secrets/signing/signing.key/
+secrets/
 
 .env
 
