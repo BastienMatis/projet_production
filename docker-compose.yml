@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  mon_sgbdr:
+    image: mariadb
+    restart: always
+    # port-externe (hôte) : port-interne (container)
+    ports:
+      - "3306:3306"    
+    # variables d'environnement à créer dans le container
+    environment:      
+      - MYSQL_ALLOW_EMPTY_PASSWORD=false
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=challenge
+    # options de lancement (encodage)
+    command: [
+      "--character-set-server=utf8mb4",
+      "--collation-server=utf8mb4_unicode_ci",
+    ]
+    volumes:
+      # stocker les données dans un dossier ./dbms-data
+      # à coté du fichier docker-compose.yml
+      - ./dbms-data:/var/lib/mysql
+    networks:
+      # Ce service existera sur le réseau virtuel suivant
+      - challenge-network
+      
+networks:
+  sgbdr-network:
+    driver: bridge
+    name: challenge-network
