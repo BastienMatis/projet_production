@@ -19,18 +19,23 @@ npm run start
 Assurez-vous d'avoir un .env complet avec les bonnes données.
 
 - Build du container :
-docker build --env-file .env -t projet_production .
+docker build -t projet_production .
 
 - Run du container pour vérifier que l'image fonctionne :
 docker run -d -p 8000:8000 projet_production
 
-- Initialiser un nouveau repo Git à la racine
-git init
+- Initialiser un nouveau repo Git à la racine (lors du premier déploiement)
+[git init]
 
 - Déploiement sur heroku
 heroku login
+heroku container:login
 [heroku create projet_production]
-git push heroku master
+heroku stack:set container
+heroku container:push web --app projet-production-hollygirls
+heroku container:release web --app projet-production-hollygirls
 
+- Avoir les logs en cas d'erreur
+heroku logs --tail
 
 
