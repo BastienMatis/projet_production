@@ -126,6 +126,14 @@ export const runChallengeTest = async (req: Request, res: Response): Promise<voi
           responses.push({ lastQuestionId, status, message, error: false });
         }
 
+        if (stderr) {
+          lastQuestionId = questionId;
+          status = "Erreur commande";
+          message = stderr;
+          allSolutionsCorrect = false;
+          responses.push({ lastQuestionId, status, message, error: true });
+        }
+
         if (i < solutionCommands.length - 1) {
           const nextQuestionId = solutionCommands[i + 1].questionId;
           lastQuestionId = nextQuestionId;
