@@ -4,6 +4,7 @@ import {
   getSolutionById,
   updateSolution,
   deleteSolution,
+  getSolutionByQuestionIds
 } from '../controllers/solutionController';
 import { SSHClient } from '../controllers/sshController';
 
