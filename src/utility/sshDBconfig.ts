@@ -20,7 +20,7 @@ export async function connectToStudentDatabase(studentId: number) {
         host: studentConnection.sshHost,
         port: 22,
         username: studentConnection.sshName,
-        privateKey: fs.readFileSync('/home/dev/secrets/signing/signing.key')
+        privateKey: fs.readFileSync('/home/dev/secrets/signing/signing.key').toString('utf8')
       };
       const forwardConfig = {
         srcHost: '127.0.0.1',
