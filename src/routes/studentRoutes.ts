@@ -5,7 +5,6 @@ import {
   updateStudent,
   deleteStudent,
 } from '../controllers/studentController';
-import { SSHClient } from '../controllers/sshController';
 
 const router = express.Router();
 
