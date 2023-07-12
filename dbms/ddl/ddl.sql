@@ -3,12 +3,12 @@ use projet_production;
 
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE admins (
   userId INT NOT NULL,
+  username VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
   FOREIGN KEY (userId) REFERENCES users(id)
 );
