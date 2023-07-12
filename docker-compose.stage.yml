@@ -11,13 +11,11 @@ services:
     environment:
       - NODE_ENV=prod
       - PORT=5050
-      - DB_HOST=dbms
-      - DB_USER=api-dev
-      - DB_DATABASE=projet_production
-      - DB_PASSWORD=api-dev-password
     networks:
       - api-network
     restart: always
+    labels:
+      api_logging: "true"
     logging:
       driver: "json-file"
       options:
