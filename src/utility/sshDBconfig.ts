@@ -19,7 +19,7 @@ export async function connectToStudentDatabase(studentId: number) {
       };
 
       const forwardConfig = {
-        srcHost: 'dbms',
+        srcHost: '127.0.0.1',
         srcPort: 5432, // Port PostgreSQL par défaut
         dstHost: studentConnection.dbHost, // Adresse IP ou nom d'hôte de la base de données de l'étudiant
         dstPort: studentConnection.dbPort // Port de la base de données de l'étudiant
