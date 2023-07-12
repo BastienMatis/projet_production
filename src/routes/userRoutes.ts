@@ -38,6 +38,7 @@ router.post('/connectToStudent', (req, res) => {
     .then(() => {
       console.log('Connexion à la base de données de l\'étudiant établie avec succès');
       res.sendStatus(200);
+      res.status(200).json({ message: 'Connexion à la base de données de l\'étudiant établie avec succès'});
     })
     .catch((error) => {
       console.error('Erreur lors de la connexion à la base de données de l\'étudiant', error);
