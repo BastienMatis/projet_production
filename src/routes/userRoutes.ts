@@ -8,7 +8,9 @@ import {
 } from '../controllers/userController';
 
 import { loginAsAdmin } from '../controllers/authController';
-import { SSHClient } from '../controllers/sshController';
+import { connectToStudentDatabase } from '../utility/sshDBconfig';
+import { insertSSHInfo } from '../controllers/sshController';
+import { insertStudentDBInfo } from '../controllers/studentConnectionController';
 
 const router = express.Router();
 
@@ -24,10 +26,19 @@ router.post('/loginAsAdmin', (req, res) => {
 });
 
 // Student connection
-router.post('/connectToStudent', async (req, res) => {
-  const { host, username } = req.body;
-  const sshCli = new SSHClient();
-  sshCli.connect({ host: host, port: 22, username: username, privateKeyPath : '../secrets/signing'}, res);
+router.post('/connectToStudent', (req, res) => {
+  insertSSHInfo(req, res);
+  insertStudentDBInfo(req, res);
+  const studentId = 1; // ID de l'étudiant que vous souhaitez connecter à sa base de données
+  connectToStudentDatabase(studentId)
+  .then(() => {
+    console.log('Connexion à la base de données de l\'étudiant établie avec succès');
+    // Effectuez d'autres opérations nécessaires avec la base de données de l'étudiant
+  })
+  .catch((error) => {
+    console.error('Erreur lors de la connexion à la base de données de l\'étudiant', error);
+  });
+
 });
 
 export default router;

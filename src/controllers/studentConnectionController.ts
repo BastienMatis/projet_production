@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { DB } from '../utility/DB';
-import { StudentDBConnection } from '../types/DBConnection';
+import { StudentConnection, StudentDBConnection } from '../types/DBConnection';
 
-export const connectToStudentDB = async (req: Request, res: Response): Promise<void> => {
+export const insertStudentDBInfo = async (req: Request, res: Response): Promise<void> => {
   const { dbUserName, password, dbName, userId, challengeId } = req.body;
   try {
     const connection = await DB.Connection;
     const [result] = await connection.query<ResultSetHeader>(
-      'UPDATE student_connections SET dbUserName ?, password ?, dbName ?, challengeId ? WHERE userId = ? AND challengeId = ?',
+      'UPDATE student_connections SET dbUserName ?, dbPassword ?, dbName ?, challengeId ? WHERE userId = ? AND challengeId = ?',
       [dbUserName, password, dbName, challengeId]
     );
     const insertedId = result.insertId;
@@ -26,22 +26,27 @@ export const connectToStudentDB = async (req: Request, res: Response): Promise<v
   }
 };
 
-export const getStudentConnections = async (req: Request, res: Response): Promise<void> => {
-  const { userId } = req.params;
+
+export const getStudentConnection = async (userId: number | null): Promise<StudentConnection | undefined> => {
   try {
     const connection = await DB.Connection;
     const [rows] = await connection.query<RowDataPacket[]>('SELECT * FROM student_connections WHERE userId = ?', [userId]);
-    const studentConnections: StudentDBConnection[] = rows.map((row: RowDataPacket) => ({
-      dbUserName: row.dbUserName,
-      password: row.password,
-      dbName: row.dbName,
-      userId: row.userId,
-      challengeId: row.challengeId,
-    }));
-    res.json(studentConnections);
+    const studentConnection = rows[0]; // Prendre uniquement la première connexion trouvée
+    if (studentConnection) {
+      return {
+        sshHost: studentConnection.sshHost,
+        sshName: studentConnection.sshName,
+        dbHost: studentConnection.dbHost,
+        dbPort: studentConnection.dbPort,
+        dbUserName: studentConnection.dbUserName,
+        dbPassword: studentConnection.dbPassword,
+        dbName: studentConnection.dbName
+      };
+    } else {
+      return undefined; // Aucune connexion trouvée pour cet utilisateur
+    }
   } catch (error) {
     console.error('Error retrieving student connections from database.', error);
-    res.status(500).json({ message: 'Error retrieving student connections.' });
   }
 };
 
