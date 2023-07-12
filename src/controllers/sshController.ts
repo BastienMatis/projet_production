@@ -17,7 +17,6 @@ export const insertSSHInfo = async (req: Request, res: Response): Promise<void> 
       sshHost,
       sshName
     };
-    res.json(studentConnection);
   } catch (error) {
     //res.status(500).json({ message: 'Error adding student answer in database.' });
   }

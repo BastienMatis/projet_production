@@ -12,17 +12,8 @@ export const insertStudentDBInfo = async (req: Request, res: Response): Promise<
       [dbHost, dbPort, dbUserName, dbPassword, dbName, challengeId, userId, challengeId]
     );
     const insertedId = result.insertId;
-    res.json({
-      id: insertedId,
-      dbUserName,
-      dbPassword,
-      dbName,
-      userId,
-      challengeId,
-    });
   } catch (error) {
     console.error('Error connecting to student in database.', error);
-    res.status(500).json({ message: 'Error connecting to student.' });
   }
 };
 
