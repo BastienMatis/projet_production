@@ -4,7 +4,6 @@ import {
   getClassChallengeById,
   deleteClassChallenge,
 } from '../controllers/classChallengeController';
-//import { SSHClient } from '../controllers/sshController';
 
 const router = express.Router();
 

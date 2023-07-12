@@ -1,28 +1,19 @@
 import { Request, Response } from 'express';
 import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { DB } from '../utility/DB';
-import { StudentConnection, StudentDBConnection } from '../types/DBConnection';
+import { StudentConnection } from '../types/DBConnection';
 
 export const insertStudentDBInfo = async (req: Request, res: Response): Promise<void> => {
-  const { dbUserName, password, dbName, userId, challengeId } = req.body;
+  const { dbHost, dbPort, dbUserName, dbPassword, dbName, userId, challengeId } = req.body;
   try {
     const connection = await DB.Connection;
     const [result] = await connection.query<ResultSetHeader>(
-      'UPDATE student_connections SET dbUserName ?, dbPassword ?, dbName ?, challengeId ? WHERE userId = ? AND challengeId = ?',
-      [dbUserName, password, dbName, challengeId]
+      'UPDATE student_connections SET dbHost = ?, dbPort = ?, dbUserName = ?, dbPassword = ?, dbName = ?, challengeId = ? WHERE userId = ? AND challengeId = ?',
+      [dbHost, dbPort, dbUserName, dbPassword, dbName, challengeId, userId, challengeId]
     );
     const insertedId = result.insertId;
-    res.json({
-      id: insertedId,
-      dbUserName,
-      password,
-      dbName,
-      userId,
-      challengeId,
-    });
   } catch (error) {
     console.error('Error connecting to student in database.', error);
-    res.status(500).json({ message: 'Error connecting to student.' });
   }
 };
 
