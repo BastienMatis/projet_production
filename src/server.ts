@@ -13,6 +13,7 @@ import studentAnswerRoutes from './routes/studentAnswerRoutes';
 import  authRoutes from "./routes/authRoutes";  
 import { DB } from './utility/DB';
 import cors from 'cors';
+import { requestLogMiddleware } from "./utility/Logging/log.middleware";
 
 dotenv.config();
 
@@ -23,6 +24,8 @@ app.use(cors({
   origin: ['http://localhost:8080']
 }));
 app.use(express.json());
+
+app.use(requestLogMiddleware('req'));
 
 app.use('/api/users', userRoutes);
 app.use('/api/challenges', challengeRoutes);
