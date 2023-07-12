@@ -6,7 +6,7 @@ import {
   deleteChallengeQuestion,
   runChallengeTest
 } from '../controllers/challengeQuestionController';
-import { SSHClient } from '../controllers/sshController';
+//import { SSHClient } from '../controllers/sshController';
 
 const router = express.Router();
 
