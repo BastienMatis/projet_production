@@ -4,6 +4,9 @@
 export interface IIndexQuery {
   page?: string;
   limit?: string;
+  where?: {
+    [key: string]: any;
+  };
 }
 
 export type IReadWhere = Record<string, string | number>;
