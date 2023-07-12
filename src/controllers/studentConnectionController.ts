@@ -4,18 +4,18 @@ import { DB } from '../utility/DB';
 import { StudentConnection, StudentDBConnection } from '../types/DBConnection';
 
 export const insertStudentDBInfo = async (req: Request, res: Response): Promise<void> => {
-  const { dbUserName, password, dbName, userId, challengeId } = req.body;
+  const { dbHost, dbPort, dbUserName, dbPassword, dbName, userId, challengeId } = req.body;
   try {
     const connection = await DB.Connection;
     const [result] = await connection.query<ResultSetHeader>(
-      'UPDATE student_connections SET dbUserName ?, dbPassword ?, dbName ?, challengeId ? WHERE userId = ? AND challengeId = ?',
-      [dbUserName, password, dbName, challengeId]
+      'UPDATE student_connections SET dbHost ?, dbPort ?, dbUserName ?, dbPassword ?, dbName ?, challengeId ? WHERE userId = ? AND challengeId = ?',
+      [dbHost, dbPort, dbUserName, dbPassword, dbName, challengeId]
     );
     const insertedId = result.insertId;
     res.json({
       id: insertedId,
       dbUserName,
-      password,
+      dbPassword,
       dbName,
       userId,
       challengeId,
