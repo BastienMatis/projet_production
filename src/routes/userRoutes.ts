@@ -26,19 +26,18 @@ router.post('/loginAsAdmin', (req, res) => {
 });
 
 // Student connection
-router.post('/connectToStudent', (req, res) => {
-  insertSSHInfo(req, res);
-  insertStudentDBInfo(req, res);
-  const studentId = 1; // ID de l'étudiant que vous souhaitez connecter à sa base de données
-  connectToStudentDatabase(studentId)
-  .then(() => {
-    console.log('Connexion à la base de données de l\'étudiant établie avec succès');
-    // Effectuez d'autres opérations nécessaires avec la base de données de l'étudiant
-  })
-  .catch((error) => {
-    console.error('Erreur lors de la connexion à la base de données de l\'étudiant', error);
-  });
+router.post('/connectToStudent', async (req, res) => {
+  try {
+    await insertSSHInfo(req, res);
+    await insertStudentDBInfo(req, res);
+    await connectToStudentDatabase(1);
 
+    console.log('Connexion à la base de données de l\'étudiant établie avec succès');
+    res.sendStatus(200);
+  } catch (error) {
+    console.error('Erreur lors de la connexion à la base de données de l\'étudiant', error);
+    res.status(500).json({ error: 'Erreur lors de la connexion à la base de données de l\'étudiant' });
+  }
 });
 
 export default router;
