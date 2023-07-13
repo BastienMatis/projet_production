@@ -21,9 +21,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 8000;
 
-app.use(cors({
-  origin: ['https://projet-production-96264.web.app/']
-}));
+app.use(cors());
 app.use(express.json());
 
 app.use(requestLogMiddleware('req'));
