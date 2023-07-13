@@ -11,6 +11,7 @@ import score from './routes/scoreRoutes';
 import classChallengeRoutes from './routes/classChallengeRoutes';
 import studentAnswerRoutes from './routes/studentAnswerRoutes';
 import  authRoutes from "./routes/authRoutes";  
+import studentConnectionRoutes from './routes/studentConnectionRoutes';
 import { DB } from './utility/DB';
 import cors from 'cors';
 import { requestLogMiddleware } from "./utility/Logging/log.middleware";
@@ -37,6 +38,7 @@ app.use('/api/scores', score);
 app.use('/api/solutions', solutionRoutes);
 app.use('/api/classChallenges', classChallengeRoutes);
 app.use('/api/studentAnswers', studentAnswerRoutes);
+app.use('/api/studentConnection', studentConnectionRoutes);
 app.use('/auth', authRoutes);  
 
 

@@ -3,6 +3,10 @@ import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { DB } from '../utility/DB';
 import { promisify } from 'util';
 import { exec as execCallback } from 'child_process';
+import { Client as SSHClient, ConnectConfig } from 'ssh2';
+import { Client as PGClient } from 'pg';
+import { getStudentConnection } from '../controllers/studentConnectionController';
+import * as fs from 'fs';
 
 export interface ChallengeQuestion {
   id: number;
@@ -100,60 +104,154 @@ export const runChallengeTest = async (req: Request, res: Response): Promise<voi
     const firstQuestionNumber = rows[0].questionNumber;
 
     let lastQuestionId = null;
-    let status = "OK";
-    let message = '';
+    let status = 'OK';
+    let message = 'Message';
     let allSolutionsCorrect = true;
 
     const responses: any[] = [];
 
-    for (let i = 0; i < solutionCommands.length; i++) {
-      const questionNumber = firstQuestionNumber + i;
-      const { command, questionId, expectedResponse } = solutionCommands[i];
+    const studentId = 5; // TODO: Remplacer par l'ID de l'étudiant connecté
 
-      try {
-        const { stdout, stderr } = await exec(command);
+    try {
+      const studentConnection = await getStudentConnection(studentId);
 
-        if (stdout.trim() !== expectedResponse) {
-          lastQuestionId = questionId;
-          status = "Mauvaise réponse";
-          message = stdout;
-          allSolutionsCorrect = false;
-          responses.push({ lastQuestionId, status, message, error: true });
-        } else {
-          lastQuestionId = questionId;
-          status = "OK";
-          message = stdout;
-          responses.push({ lastQuestionId, status, message, error: false });
+      if (studentConnection) {
+        const tunnelConfig: ConnectConfig = {
+          host: studentConnection.sshHost,
+          port: 22,
+          username: studentConnection.sshName,
+          privateKey: fs.readFileSync('/home/dev/secrets/signing/signing.key', 'utf8')
+        };
+
+        const forwardConfig = {
+          srcHost: '127.0.0.1',
+          srcPort: 5432, // Port PostgreSQL par défaut
+          dstHost: studentConnection.dbHost, // Adresse IP ou nom d'hôte de la base de données de l'étudiant
+          dstPort: studentConnection.dbPort // Port de la base de données de l'étudiant
+        };
+
+        const sshClient = new SSHClient();
+
+        console.log('Tentative de connexion SSH avec les paramètres suivants :');
+        console.log('Hôte :', tunnelConfig.host);
+        console.log('Port :', tunnelConfig.port);
+        console.log('Utilisateur :', tunnelConfig.username);
+
+        const SSHConnection = new Promise<PGClient>((resolve, reject) => {
+          sshClient.on('ready', async () => {
+            console.log('Connexion SSH établie avec succès.');
+        
+            try {
+              const sshExec = promisify(sshClient.exec.bind(sshClient));
+        
+              for (let i = 0; i < solutionCommands.length; i++) {
+                const questionNumber = firstQuestionNumber + i;
+                const { command, questionId, expectedResponse } = solutionCommands[i];
+
+                console.log(i, solutionCommands.length)
+        
+                console.log(`Exécution de la commande "${command}"`);
+        
+                const { stdout, stderr } = await sshExec(command);
+        
+                let output = '';
+                let hasStderr = false; // Variable pour suivre si stderr a été traité
+        
+                stdout.on('data', (data: Buffer) => {
+                  output += data.toString();
+                });
+        
+                stdout.on('close', () => {
+                  console.log('Sortie de la commande :', output.trim());
+                  // Utilisez la valeur de la sortie de la commande ici
+                  if (!hasStderr) {
+                    if (output.trim() !== expectedResponse) {
+                      console.log("output mauvaise réponse: ", output)
+                      lastQuestionId = questionId;
+                      status = 'Mauvaise réponse';
+                      message = output;
+                      allSolutionsCorrect = false;
+                      responses.push({ lastQuestionId, status, message, error: true });
+                    } else {
+                      lastQuestionId = questionId;
+                      status = 'OK';
+                      message = output;
+                      responses.push({ lastQuestionId, status, message, error: false });
+                    }
+                    if (i === solutionCommands.length - 1) {
+                      // Dernière question, envoyer la réponse finale
+                      const responsesObj = Object.assign({}, responses);
+                      console.log(responsesObj);
+                      res.json(responsesObj);
+                    }
+                  }
+                });
+        
+                stderr.on('data', (data: Buffer) => {
+                  output += data.toString();
+                  hasStderr = true; // Marquer que stderr a été traité
+                });
+        
+                stderr.on('close', () => {
+                  console.log("Sortie de l'erreur : ", output.trim());
+                  // Utilisez la valeur de la sortie de l'erreur ici
+                  if (hasStderr && output.trim().length > 0) {
+                    lastQuestionId = questionId;
+                    status = 'Erreur commande';
+                    message = output;
+                    allSolutionsCorrect = false;
+                    responses.push({ lastQuestionId, status, message, error: true });
+                  }
+                  if (hasStderr && i === solutionCommands.length - 1) {
+                    // Dernière question, envoyer la réponse finale
+                    const responsesObj = Object.assign({}, responses);
+                    console.log(responsesObj);
+                    res.json(responsesObj);
+                  }
+
+                });
+              }
+        
+              // Fermer la connexion SSH après exécution des commandes
+              sshClient.end();
+        
+            } catch (error: any) {
+              console.error(`Erreur lors de l'exécution de la commande :`, error);
+              lastQuestionId = null;
+              status = 'Erreur commande';
+              message = error.message;
+              allSolutionsCorrect = false;
+              responses.push({ lastQuestionId, status, message, error: true });
+        
+              const responsesObj = Object.assign({}, responses);
+              res.json(responsesObj);
+            }
+          }).on('error', (err) => {
+            console.error('Erreur lors de la connexion SSH :', err);
+            reject(err);
+          }).connect(tunnelConfig);
+        });
+        
+
+        try {
+          const dbConnection = await SSHConnection;
+
+          // ...
+          dbConnection.end();
+        } catch (error) {
+          console.error('Erreur lors de la connexion via le tunnel SSH', error);
+          res.status(500).json({ message: 'Erreur lors de la connexion via le tunnel SSH' });
         }
-
-        if (stderr) {
-          lastQuestionId = questionId;
-          status = "Erreur commande";
-          message = stderr;
-          allSolutionsCorrect = false;
-          responses.push({ lastQuestionId, status, message, error: true });
-        }
-
-        if (i < solutionCommands.length - 1) {
-          const nextQuestionId = solutionCommands[i + 1].questionId;
-          lastQuestionId = nextQuestionId;
-          status = "OK";
-          message = '';
-        }
-      } catch (error: any) {
-        console.error(`Erreur lors de l'exécution de la commande`);
-        lastQuestionId = questionId;
-        status = "Erreur commande";
-        message = error.message;
-        allSolutionsCorrect = false;
-        responses.push({ lastQuestionId, status, message, error: true });
+      } else {
+        console.error('Aucune connexion d\'étudiant trouvée');
+        res.status(500).json({ message: 'Aucune connexion d\'étudiant trouvée' });
       }
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la connexion de l\'étudiant', error);
+      res.status(500).json({ message: 'Erreur lors de la récupération de la connexion de l\'étudiant' });
     }
-
-    const responsesObj = Object.assign({}, responses);
-    res.json(responsesObj);
   } catch (error) {
-    console.error('Error running challenge test:', error);
-    res.status(500).json({ message: 'Error running challenge test.' });
+    console.error('Erreur lors de l\'exécution du test de défi :', error);
+    res.status(500).json({ message: 'Erreur lors de l\'exécution du test de défi.' });
   }
 };

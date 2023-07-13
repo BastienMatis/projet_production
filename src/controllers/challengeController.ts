@@ -24,11 +24,12 @@ export const getAllChallenges = async (req: Request, res: Response): Promise<voi
 
 export const createChallenge = async (req: Request, res: Response): Promise<void> => {
   const { name } = req.body;
+  const closed = false;
   try {
     const connection = await DB.Connection;
     const [result] = await connection.query<ResultSetHeader>(
-      'INSERT INTO challenges (name) VALUES (?)',
-      [name]
+      'INSERT INTO challenges (name, closed) VALUES (?, ?)',
+      [name, closed]
     );
     const insertedChallengeId = result.insertId;
     const [rows] = await connection.query<RowDataPacket[]>('SELECT * FROM challenges WHERE id = ?', [insertedChallengeId]);
