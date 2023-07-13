@@ -85,3 +85,29 @@ export const updateScore = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({ message: 'Error updating score.' });
   }
 };
+
+export const getScoresByChallenge = async (req: Request, res: Response): Promise<void> => {
+  const { challengeId } = req.params;
+  try {
+    const connection = await DB.Connection;
+    const [rows] = await connection.query<RowDataPacket[]>(
+      `SELECT s.id, s.score, st.studentFirstName, st.studentLastName 
+      FROM scores s 
+      INNER JOIN students st ON s.studentId = st.userId 
+      WHERE s.challengeId = ?`,
+      [challengeId]
+    );
+    const scores: Score[] = rows.map((row: RowDataPacket) => ({
+      id: row.id,
+      studentId: row.studentId,
+      challengeId: row.challengeId,
+      score: row.score,
+      studentFirstName: row.studentFirstName,
+      studentLastName: row.studentLastName
+    }));
+    res.json(scores);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des scores depuis la base de données:', error);
+    res.status(500).json({ message: 'Erreur lors de la récupération des scores.' });
+  }
+};

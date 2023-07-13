@@ -1,5 +1,5 @@
 import express from 'express';
-import { createScore, getScoresByStudent, deleteScore, updateScore } from '../controllers/scoreController';
+import { createScore, getScoresByStudent, deleteScore, updateScore, getScoresByChallenge } from '../controllers/scoreController';
 
 const router = express.Router();
 
@@ -17,5 +17,6 @@ router.post('/', async (req, res) => {
 router.get('/student/:studentId', getScoresByStudent);
 router.delete('/:id', deleteScore);
 router.put('/', updateScore);
+router.get('/challenge/:challengeId', getScoresByChallenge);
 
 export default router;
