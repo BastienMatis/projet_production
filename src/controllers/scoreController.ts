@@ -12,7 +12,7 @@ export const createScore = async (studentId: number, challengeId: number): Promi
   try {
     const connection = await DB.Connection;
     const [result] = await connection.query<ResultSetHeader>(
-      'INSERT INTO scores (studentId, challengeId) VALUES (?, ?)',
+      'INSERT INTO scores (studentId, challengeId, score) VALUES (?, ?, 0)',
       [studentId, challengeId]
     );
     const insertedId = result.insertId;
@@ -40,6 +40,7 @@ export const getScoresByStudent = async (req: Request, res: Response): Promise<v
       id: row.id,
       studentId: row.studentId,
       challengeId: row.challengeId,
+      score: row.score
     }));
     res.json(scores);
   } catch (error) {
@@ -61,5 +62,26 @@ export const deleteScore = async (req: Request, res: Response): Promise<void> =>
   } catch (error) {
     console.error('Error deleting score from database.', error);
     res.status(500).json({ message: 'Error deleting score.' });
+  }
+};
+
+export const updateScore = async (req: Request, res: Response): Promise<void> => {
+  const { studentId, challengeId, score } = req.body;
+
+  try {
+    const connection = await DB.Connection;
+    const [result] = await connection.query<ResultSetHeader>(
+      'UPDATE scores SET score = ? WHERE studentId = ? AND challengeId = ?',
+      [score, studentId, challengeId]
+    );
+
+    if (result.affectedRows === 0) {
+      res.status(404).json({ message: 'Score not found.' });
+    } else {
+      res.json({ message: 'Score updated successfully.' });
+    }
+  } catch (error) {
+    console.error('Error updating score in the database:', error);
+    res.status(500).json({ message: 'Error updating score.' });
   }
 };

@@ -64,6 +64,7 @@ CREATE TABLE student_connections (
 
 CREATE TABLE scores (
   id INT AUTO_INCREMENT PRIMARY KEY,
+  score INT,
   studentId INT NOT NULL,
   challengeId INT NOT NULL,
   FOREIGN KEY (studentId) REFERENCES students(userId),

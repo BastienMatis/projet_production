@@ -110,7 +110,7 @@ export const runChallengeTest = async (req: Request, res: Response): Promise<voi
 
     const responses: any[] = [];
 
-    const studentId = 5; // TODO: Remplacer par l'ID de l'étudiant connecté
+    const studentId = 1; // TODO: Remplacer par l'ID de l'étudiant connecté
 
     try {
       const studentConnection = await getStudentConnection(studentId);
